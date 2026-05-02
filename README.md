@@ -47,6 +47,12 @@ number controls load order; the task name explains the file's responsibility.
 Keep numbering simple and sequential unless inserting a file between existing
 fragments would make a gap useful.
 
+## Setup Notes
+
+The root `zshrc` sets `DOTFILES_DIR` to `$HOME/github/dotfiles`. If you clone
+this repository somewhere else, review that value before linking or sourcing
+the Zsh entrypoint.
+
 ## Secrets
 
 Secrets do not belong in this repository.
