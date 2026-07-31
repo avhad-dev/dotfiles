@@ -1,0 +1,6 @@
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# Resolve the repository location from this managed file, even when it is
+# linked from a checkout outside the default home-directory location.
+DOTFILES_DIR="${${(%):-%N}:A:h:h}"
