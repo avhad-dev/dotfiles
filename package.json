@@ -1,0 +1,11 @@
+{
+  "name": "kuro-dotfiles",
+  "private": true,
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "0.83.0",
+    "@openai/codex": "0.146.0"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.9"
+  }
+}
