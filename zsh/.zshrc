@@ -12,5 +12,8 @@ codex() {
 
 pi() {
   nix develop "$DOTFILES_DIR" --command \
-    "$DOTFILES_DIR/node_modules/.bin/pi" "$@"
+    "$DOTFILES_DIR/node_modules/.bin/pi" \
+    --append-system-prompt "$DOTFILES_DIR/pi/APPEND_SYSTEM.md" \
+    --skill "$DOTFILES_DIR/pi/skills/change-walkthrough" \
+    "$@"
 }

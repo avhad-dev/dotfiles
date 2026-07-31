@@ -16,6 +16,12 @@ Work deliberately:
 - Keep changes easy to review: preserve unrelated work, explain the outcome
   first, and name the files changed.
 - Never expose, commit, or invent credentials, secrets, or private data.
+- Keep reports, findings, templates, and recommendations in the current
+  session by default. Do not create, edit, stage, commit, download, or
+  otherwise write files unless the user explicitly asks for that operation.
+  A request merely to propose, draft, show, review, or generate content does
+  not authorize writing files; an explicit request to create or write a named
+  file does.
 
 For Git commits, follow repository instructions first. Otherwise, make each
 commit independently reviewable, limited to one logical change, and use a
