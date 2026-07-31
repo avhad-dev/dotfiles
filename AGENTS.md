@@ -16,20 +16,6 @@ configuration repository for system policy.
   through `nix develop` and keep their path resolution checkout-independent.
 - Document `nix develop --command npm ci` whenever the dependency bootstrap
   changes.
-- Do not commit `.env` files, API keys, SSH keys, tokens, or `node_modules`.
+- Do not commit `.env` files or `node_modules`.
 - Validate with `nix flake check --no-build`, `zsh -n zsh/.zshrc`, and
   `bash -n install.sh` when relevant.
-
-## Git history
-
-Use lowercase Conventional Commit subjects. Make each commit independently
-reviewable and scoped to one feature or maintenance action. Examples:
-
-```text
-feat: add coding agent shell launchers
-chore: lock Nix development shell
-docs: document harness workflow
-```
-
-Use a short bullet-point body when a change needs context. Never include
-secrets, private machine data, or credentials in commits.
