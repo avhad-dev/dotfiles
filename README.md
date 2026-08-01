@@ -13,7 +13,8 @@ project flakes.
   CLIs.
 - `zsh/.zshrc` exposes `codex` and `pi` functions that run local CLIs through
   `nix develop`.
-- `install.sh` links the managed Zsh configuration to `~/.zshrc`.
+- `install.sh` links the managed Zsh configuration to `~/.zshrc` and the Pi
+  instructions to `~/.pi/agent/AGENTS.md`.
 
 ## Setup
 
