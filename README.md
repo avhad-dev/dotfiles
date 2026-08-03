@@ -36,7 +36,10 @@ needed tools; each agent runs as an isolated ephemeral Pi process. Subagents
 are read-only by default (`read`, `grep`, `find`, and `ls`). Because child
 processes disable extensions, a custom provider registered only by a parent Pi
 extension is unavailable to subagents; select a provider available from Pi's
-built-in catalogue or configuration instead.
+built-in catalogue or configuration instead. While subagents run, open the
+read-only observer with `/subagents` or Ctrl+Shift+S. Tab switches between
+agents; the live activity stays in the TUI and is not added to the parent
+model's context.
 
 Validate changes with:
 

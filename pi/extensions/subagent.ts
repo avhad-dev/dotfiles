@@ -15,6 +15,12 @@ import { Type } from "typebox";
 
 const MAX_AGENTS = 4;
 const DEFAULT_TOOLS = ["read", "grep", "find", "ls"] as const;
+const OBSERVER_CHANNEL = "subagent:observer";
+const OBSERVED_EVENT_TYPES = new Set([
+  "message_end",
+  "tool_execution_start",
+  "tool_execution_end",
+]);
 
 const ThinkingLevel = StringEnum(
   ["off", "minimal", "low", "medium", "high", "xhigh", "max"] as const,
@@ -62,6 +68,8 @@ interface ChildResult {
 interface SubagentDetails {
   results: ChildResult[];
 }
+
+type ObserverEmitter = (event: Record<string, unknown>) => void;
 
 function getPiInvocation(args: string[]): { command: string; args: string[] } {
   const currentScript = process.argv[1];
@@ -150,6 +158,9 @@ async function runAgent(
   parentModel: string,
   parentThinking: string,
   signal: AbortSignal | undefined,
+  runId: string,
+  agentId: string,
+  emitObserver: ObserverEmitter,
 ): Promise<ChildResult> {
   const model = request.model ?? parentModel;
   const thinking = request.thinking ?? parentThinking;
@@ -191,6 +202,7 @@ async function runAgent(
   const invocation = getPiInvocation(args);
 
   const exitCode = await new Promise<number>((resolve) => {
+    emitObserver({ type: "agent-start", runId, agentId, timestamp: Date.now() });
     const child = spawn(invocation.command, invocation.args, {
       cwd,
       shell: false,
@@ -201,7 +213,24 @@ async function runAgent(
     const consumeLine = (line: string) => {
       if (!line.trim()) return;
       try {
-        const event = JSON.parse(line) as { type?: string; message?: Message };
+        const event = JSON.parse(line) as {
+          type?: string;
+          message?: Message;
+          assistantMessageEvent?: { type?: string; delta?: string };
+        };
+        if (event.type === "message_update") {
+          const update = event.assistantMessageEvent;
+          if (update?.type === "text_start" || update?.type === "text_delta") {
+            emitObserver({
+              type: "child-event",
+              runId,
+              agentId,
+              event: { type: update.type, delta: update.delta },
+            });
+          }
+        } else if (event.type && OBSERVED_EVENT_TYPES.has(event.type)) {
+          emitObserver({ type: "child-event", runId, agentId, event });
+        }
         if (event.type !== "message_end" || !event.message) return;
         messages.push(event.message);
         if (event.message.role === "assistant") {
@@ -221,7 +250,9 @@ async function runAgent(
       for (const line of lines) consumeLine(line);
     });
     child.stderr.on("data", (chunk) => {
-      stderr += chunk.toString();
+      const text = chunk.toString();
+      stderr += text;
+      emitObserver({ type: "stderr", runId, agentId, text });
     });
     child.on("error", (error) => {
       stderr += `${error.message}\n`;
@@ -242,7 +273,7 @@ async function runAgent(
     else signal?.addEventListener("abort", abort, { once: true });
   });
 
-  return {
+  const result = {
     kind: request.kind,
     model,
     thinking,
@@ -254,6 +285,15 @@ async function runAgent(
     errorMessage,
     usage,
   };
+  emitObserver({
+    type: "agent-end",
+    runId,
+    agentId,
+    timestamp: Date.now(),
+    exitCode: result.exitCode,
+    stopReason: result.stopReason,
+  });
+  return result;
 }
 
 export default function (pi: ExtensionAPI) {
@@ -276,19 +316,37 @@ export default function (pi: ExtensionAPI) {
       }),
     }),
 
-    async execute(_toolCallId, params, signal, onUpdate, ctx) {
+    async execute(toolCallId, params, signal, onUpdate, ctx) {
       const parentModel = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : "";
       if (!parentModel) throw new Error("No parent model is selected");
 
+      const emitObserver: ObserverEmitter = (event) => pi.events.emit(OBSERVER_CHANNEL, event);
+      emitObserver({
+        type: "run-start",
+        runId: toolCallId,
+        timestamp: Date.now(),
+        agents: params.agents.map((request, index) => ({
+          id: `${toolCallId}:${index}`,
+          kind: request.kind,
+          task: request.task,
+          model: request.model ?? parentModel,
+          thinking: request.thinking ?? ctx.thinkingLevel,
+          tools: request.tools ?? [...DEFAULT_TOOLS],
+        })),
+      });
+
       const completed: ChildResult[] = [];
       const results = await Promise.all(
-        params.agents.map(async (request) => {
+        params.agents.map(async (request, index) => {
           const result = await runAgent(
             ctx.cwd,
             request,
             parentModel,
             ctx.thinkingLevel,
             signal,
+            toolCallId,
+            `${toolCallId}:${index}`,
+            emitObserver,
           );
           completed.push(result);
           onUpdate?.({
@@ -304,6 +362,7 @@ export default function (pi: ExtensionAPI) {
         }),
       );
 
+      emitObserver({ type: "run-end", runId: toolCallId, timestamp: Date.now() });
       if (signal?.aborted) throw new Error("Subagents were aborted");
 
       const sections = results.map((result) => {
