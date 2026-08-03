@@ -14,7 +14,7 @@ project flakes.
 - `zsh/.zshrc` exposes `codex` and `pi` functions that run local CLIs through
   `nix develop`.
 - `install.sh` links the managed Zsh configuration to `~/.zshrc` and the Pi
-  instructions to `~/.pi/agent/AGENTS.md`.
+  instructions, extensions, and skills into `~/.pi/agent/`.
 
 ## Setup
 
@@ -29,6 +29,14 @@ nix develop --command npm ci
 Open a new Zsh session, then use `codex` or `pi`. The launchers locate the
 repository from the managed `.zshrc` symlink, so the checkout need not live at
 a particular path.
+
+Pi includes a `subagent` extension and matching `/skill:subagents` skill. Ask Pi
+to use one or more subagents and specify roles, models, thinking levels, and
+needed tools; each agent runs as an isolated ephemeral Pi process. Subagents
+are read-only by default (`read`, `grep`, `find`, and `ls`). Because child
+processes disable extensions, a custom provider registered only by a parent Pi
+extension is unavailable to subagents; select a provider available from Pi's
+built-in catalogue or configuration instead.
 
 Validate changes with:
 
