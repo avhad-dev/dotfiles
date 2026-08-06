@@ -13,13 +13,15 @@ project flakes.
   CLIs.
 - `zsh/.zshrc` exposes `agy`, `codex`, and `pi` functions that run local CLIs
   through `nix develop`.
-- `install.sh` links the managed Zsh configuration to `~/.zshrc` and the Pi
-  instructions, extensions, and skills into `~/.pi/agent/`.
+- `tmux/.tmux.conf` enables extended keys, numbers windows from 1, and
+  automatically closes numbering gaps when windows are removed.
+- `install.sh` links the managed Zsh and tmux configurations into the home
+  directory and the Pi instructions, extensions, and skills into `~/.pi/agent/`.
 
 ## Setup
 
 From any checkout location, install the pinned CLI dependencies and then link
-the Zsh configuration:
+the managed configurations:
 
 ```sh
 nix develop --command npm ci
