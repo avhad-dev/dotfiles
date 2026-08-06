@@ -5,6 +5,10 @@ export VISUAL="nvim"
 # linked from a checkout outside the default home-directory location.
 DOTFILES_DIR="${${(%):-%N}:A:h:h}"
 
+agy() {
+  nix develop "$DOTFILES_DIR" --command agy "$@"
+}
+
 codex() {
   nix develop "$DOTFILES_DIR" --command \
     "$DOTFILES_DIR/node_modules/.bin/codex" "$@"

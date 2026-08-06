@@ -7,12 +7,12 @@ project flakes.
 
 ## Contents
 
-- `flake.nix` and `flake.lock` provide Node.js 22 and Git in a reproducible
-  development shell.
+- `flake.nix` and `flake.lock` provide Node.js 22, Git, and the Antigravity
+  CLI in a reproducible development shell.
 - `package.json` and `package-lock.json` pin the Codex and Pi coding-agent
   CLIs.
-- `zsh/.zshrc` exposes `codex` and `pi` functions that run local CLIs through
-  `nix develop`.
+- `zsh/.zshrc` exposes `agy`, `codex`, and `pi` functions that run local CLIs
+  through `nix develop`.
 - `install.sh` links the managed Zsh configuration to `~/.zshrc` and the Pi
   instructions, extensions, and skills into `~/.pi/agent/`.
 
@@ -26,9 +26,9 @@ nix develop --command npm ci
 ./install.sh
 ```
 
-Open a new Zsh session, then use `codex` or `pi`. The launchers locate the
-repository from the managed `.zshrc` symlink, so the checkout need not live at
-a particular path.
+Open a new Zsh session, then use `agy`, `codex`, or `pi`. The launchers locate
+the repository from the managed `.zshrc` symlink, so the checkout need not live
+at a particular path.
 
 Pi includes a `subagent` extension and matching `/skill:subagents` skill. Ask Pi
 to use one or more subagents and specify roles, models, thinking levels, and
