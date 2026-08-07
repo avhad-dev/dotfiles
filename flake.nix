@@ -10,11 +10,11 @@
       pkgs = import nixpkgs { inherit system; };
       antigravityCli = pkgs.stdenv.mkDerivation (finalAttrs: {
         pname = "antigravity-cli";
-        version = "1.1.10";
+        version = "1.1.11";
 
         src = pkgs.fetchurl {
-          url = "https://storage.googleapis.com/antigravity-public/antigravity-cli/${finalAttrs.version}-6423386432339968/linux-arm/cli_linux_arm64.tar.gz";
-          hash = "sha512-LWTE4J6yLIJLwpjKYeSMsOYmiDU9tBIplrLku6jJoVcNLL9uZFLtfvMN8JQL+PBYeJ5Gau1SZMGuLkYT7KW1cw==";
+          url = "https://storage.googleapis.com/antigravity-public/antigravity-cli/${finalAttrs.version}-4956531888881664/linux-arm/cli_linux_arm64.tar.gz";
+          hash = "sha512-+xrKzb3mBqYKgAK23AqMmAC7hK7zrdBp+EP2/6Pvqv5KUvzkQFBcbxauvWsSV8zl7PrsLbqyFzLGJZQ0IjGM2w==";
         };
 
         dontUnpack = true;
