@@ -37,9 +37,14 @@ report or when the user requests cleanup.
 4. Run agents **sequentially**. They share the checkout, so never run Gemini
 workers or reviewers concurrently. Use a bounded outer `timeout` for every
 headless command. Do not commit, push, reset, stash, or discard changes.
-5. The helper scripts use the pinned local CLIs:
-   - `$SKILL_DIR/scripts/agy-headless.sh` always selects Gemini 3.1 Pro, high.
-   - `$SKILL_DIR/scripts/sol-headless.sh` always selects GPT-5.6 Sol, high.
+5. The helper scripts use the pinned local CLIs and preserve each run's logs
+outside the repository in `~/.agents/sessions/`:
+   - `$SKILL_DIR/scripts/agy-headless.sh` always selects Gemini 3.1 Pro, high,
+     and creates a unique `mktemp` log file there.
+   - `$SKILL_DIR/scripts/sol-headless.sh` always selects GPT-5.6 Sol, high,
+     and has Pi persist its UUID-named JSONL session there.
+   Do not remove these logs during cleanup; inspect them when a headless run
+   fails.
 
 For a Gemini run that may edit the checkout, pass
 `--mode accept-edits --dangerously-skip-permissions` explicitly. That flag is
@@ -127,7 +132,8 @@ diff remains within the approved scope. Report command output accurately.
 
 Do not claim completion if a headless agent timed out, a gate did not return
 `VERIFIED`, a required test failed, or the final diff includes unexplained
-files. State the blocking gate and preserve `$RUN_DIR` in that case.
+files. State the blocking gate, preserve `$RUN_DIR`, and identify the relevant
+`~/.agents/sessions/` log in that case.
 
 ## Final report
 
@@ -136,5 +142,6 @@ Report in this order:
 1. implemented behavior and changed paths;
 2. Sol gate results and any remediation rounds;
 3. exact verification commands and outcomes;
-4. uncommitted status; and
-5. temporary artifact location (or that it was removed).
+4. uncommitted status;
+5. persistent session-log location(s); and
+6. temporary artifact location (or that it was removed).
