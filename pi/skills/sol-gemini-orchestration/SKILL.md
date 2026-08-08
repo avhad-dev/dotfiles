@@ -1,21 +1,19 @@
 ---
 name: sol-gemini-orchestration
-description: "Have GPT-5.6 Sol supervise sequential Gemini 3.1 Pro headless agents for a requested coding change: plan, verify, implement, review, remediate, and test. Use when the user asks to delegate implementation to Gemini but wants Sol to retain control and independently verify each gate."
+description: "Have a user-selected orchestrator supervise sequential Gemini 3.1 Pro headless agents for a requested coding change: plan, verify, implement, review, remediate, and test. Use when the user asks to delegate implementation to Gemini but wants the orchestrator to retain control and independently verify each gate."
 ---
 
-# Sol-supervised Gemini workflow
+# Orchestrator-supervised Gemini workflow
 
 Use this workflow only for a concrete coding task the user has authorized. The
-current Pi agent is the controller and must be GPT-5.6 Sol at high thinking.
-If it is not, tell the user to start Pi with:
+current Pi agent is the orchestrator; the user may choose whichever model and
+thinking level they prefer for that session.
 
-```sh
-pi --model openai-codex/gpt-5.6-sol --thinking high
-```
-
-Gemini is an untrusted worker. Sol owns scope, decides whether a gate passes,
-reviews every Gemini-produced change, and reports the final result. Never let
-Gemini self-certify a plan, code review, or test result.
+Gemini is an untrusted worker. The orchestrator owns scope, decides whether a
+gate passes, reviews every Gemini-produced change, and reports the final result.
+The independent Sol review sessions provide additional verification but do not
+replace the orchestrator's judgment. Never let Gemini self-certify a plan, code
+review, or test result.
 
 ## Setup and safety
 
