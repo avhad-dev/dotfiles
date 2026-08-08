@@ -43,6 +43,13 @@ read-only observer with `/subagents` or Ctrl+Shift+S. Tab switches between
 agents; the live activity stays in the TUI and is not added to the parent
 model's context.
 
+For Sol-supervised Gemini work, start Pi with GPT-5.6 Sol and invoke
+`/skill:sol-gemini-orchestration <task>`. The skill has Gemini 3.1 Pro perform
+sequential planning, implementation, remediation, and testing; fresh Sol
+sessions independently verify plans and code before the workflow can proceed.
+It leaves workflow artifacts outside the repository and never commits or
+pushes.
+
 Validate changes with:
 
 ```sh
