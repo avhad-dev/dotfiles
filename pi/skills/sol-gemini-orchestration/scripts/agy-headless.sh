@@ -9,7 +9,6 @@ mkdir -p -- "$session_dir"
 log_file="$(mktemp "$session_dir/agy-XXXXXXXX.log")"
 
 exec nix develop "$dotfiles_dir" --command agy \
-  --print \
   --model gemini-3.1-pro-high \
   --effort high \
   --log-file "$log_file" \
